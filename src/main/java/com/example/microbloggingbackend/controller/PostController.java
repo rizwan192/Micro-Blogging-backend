@@ -1,10 +1,7 @@
 package com.example.microbloggingbackend.controller;
 
 import com.example.microbloggingbackend.dto.PostDto;
-import com.example.microbloggingbackend.dto.PostRequest;
-import com.example.microbloggingbackend.dto.PostResponse;
-import com.example.microbloggingbackend.security.PostService;
-import lombok.AllArgsConstructor;
+import com.example.microbloggingbackend.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +16,7 @@ import static org.springframework.http.ResponseEntity.status;
     public class PostController {
 
         @Autowired
-        private PostService postService;
+        private PostService.PostService postService;
 
         @PostMapping
         public ResponseEntity createPost(@RequestBody PostDto postDto) {

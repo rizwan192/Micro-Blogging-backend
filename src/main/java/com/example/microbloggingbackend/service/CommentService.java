@@ -1,6 +1,7 @@
 package com.example.microbloggingbackend.service;
 import com.example.microbloggingbackend.dto.CommentsDto;
 import com.example.microbloggingbackend.dto.LoginRequest;
+import com.example.microbloggingbackend.dto.PostDto;
 import com.example.microbloggingbackend.dto.RegisterRequest;
 import com.example.microbloggingbackend.exception.MicroBloggingBackendException;
 import com.example.microbloggingbackend.exception.PostNotFoundException;
@@ -27,13 +28,13 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final AuthService authService;
-    private final CommentMapper commentMapper;
+    //private final CommentMapper commentMapper;
     private final CommentRepository commentRepository;
 
     public void save(CommentsDto commentsDto) {
         Post post = postRepository.findById(commentsDto.getPostId())
                 .orElseThrow(() -> new PostNotFoundException(commentsDto.getPostId().toString()));
-        Comment comment = commentMapper.map(commentsDto, post, authService.getCurrentUser());
+        Comment comment = comment.stream().map(commentsDto, post, authService.getCurrentUser());
         commentRepository.save(comment);
     }
 
@@ -41,7 +42,16 @@ public class CommentService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId.toString()));
         return commentRepository.findByPost(post)
                 .stream()
-                .map(commentMapper::mapToDto).collect(toList());
+               // .map(.collect(toList());
+    }
+
+    private PostDto mapFromCommentToDto(Post post) {
+        CommentsDto commentsDto = new CommentsDto();
+        commentsDto.setId(commentsDto.getPostId());
+        commentsDto.createdDate(commentsDto.getCreatedDate());
+        commentsDto.text(commentsDto.getDescription());
+        commentsDto.userName(commentsDto.getUser().getUsername());
+        return commentsDto;
     }
 
     public List<CommentsDto> getAllCommentsForUser(String userName) {
